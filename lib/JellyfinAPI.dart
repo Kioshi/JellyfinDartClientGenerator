@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:json_annotation/json_annotation.dart';
 
 import 'package:intl/intl.dart';
@@ -7,16 +9,37 @@ part 'JellyfinAPI.g.dart';
 
 //2019-04-29T09:06:32.5457794Z
 final _dateFormatter = new DateFormat('yyyy-MM-ddTHH:mm:ss.mmmuuuZ');
-DateTime _fromJson(String date){
+dynamic dateTimeFromJson(String date){
   if (date == null)
     return null;
+
+  if (date[0] == '{')
+  {
+    return Map.castFrom<String, dynamic, String, DateTime>(jsonDecode(date));
+  }
+
+  if (date[0] == '[')
+  {
+    return (jsonDecode(date) as List<dynamic>).map((dynamic value) => _dateFormatter.parse(value));
+  }
+
   return _dateFormatter.parse(date);
 }
-String _toJson(DateTime date)
+String dateTimeToJson(dynamic date)//DateTime date)
 {
   if (date == null)
     return null;
-  return _dateFormatter.format(date);
+
+  if (date is DateTime)
+    return _dateFormatter.format(date);
+
+  if (date is List<DateTime>)
+    return date.map((DateTime d) => _dateFormatter.format(d)).toList().toString();
+
+  if (date is Map<String, DateTime>)
+    return date.map((String s, DateTime d) => MapEntry(s, _dateFormatter.format(d))).toString();
+
+  return null;
 }
 
 enum eConnectionLinkType
@@ -38,9 +61,9 @@ class User {
   final bool HasConfiguredPassword;
   final bool HasConfiguredEasyPassword;
   final bool EnableAutoLogin;
-  @JsonKey(fromJson: _fromJson, toJson: _toJson)
+  @JsonKey(fromJson: dateTimeFromJson, toJson: dateTimeToJson)
   final DateTime LastLoginDate;
-  @JsonKey(fromJson: _fromJson, toJson: _toJson)
+  @JsonKey(fromJson: dateTimeFromJson, toJson: dateTimeToJson)
   final DateTime LastActivityDate;
   final UserConfiguration Configuration;
   final UserPolicy Policy;
@@ -170,9 +193,9 @@ class AccessSchedule {
   final double StartHour;
   final double EndHour;
 
-
   AccessSchedule({this.DayOfWeek, this.StartHour, this.EndHour});
 
   factory AccessSchedule.fromJson(Map<String, dynamic> json) => _$AccessScheduleFromJson(json);
   Map<String, dynamic> toJson() => _$AccessScheduleToJson(this);
 }
+

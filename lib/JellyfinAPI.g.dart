@@ -20,8 +20,8 @@ User _$UserFromJson(Map<String, dynamic> json) {
       HasConfiguredPassword: json['HasConfiguredPassword'] as bool,
       HasConfiguredEasyPassword: json['HasConfiguredEasyPassword'] as bool,
       EnableAutoLogin: json['EnableAutoLogin'] as bool,
-      LastLoginDate: _fromJson(json['LastLoginDate'] as String),
-      LastActivityDate: _fromJson(json['LastActivityDate'] as String),
+      LastLoginDate: dateTimeFromJson(json['LastLoginDate'] as String),
+      LastActivityDate: dateTimeFromJson(json['LastActivityDate'] as String),
       Configuration: UserConfiguration.fromJson(
           json['Configuration'] as Map<String, dynamic>),
       Policy: UserPolicy.fromJson(json['Policy'] as Map<String, dynamic>),
@@ -41,8 +41,8 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'HasConfiguredPassword': instance.HasConfiguredPassword,
       'HasConfiguredEasyPassword': instance.HasConfiguredEasyPassword,
       'EnableAutoLogin': instance.EnableAutoLogin,
-      'LastLoginDate': _toJson(instance.LastLoginDate),
-      'LastActivityDate': _toJson(instance.LastActivityDate),
+      'LastLoginDate': dateTimeToJson(instance.LastLoginDate),
+      'LastActivityDate': dateTimeToJson(instance.LastActivityDate),
       'Configuration': instance.Configuration,
       'Policy': instance.Policy,
       'PrimaryImageAspectRatio': instance.PrimaryImageAspectRatio
